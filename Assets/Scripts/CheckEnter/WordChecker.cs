@@ -72,6 +72,10 @@ public class WordChecker : MonoBehaviour
 
     private void OnCharacterTyped(char c)
     {
+        // Enter и Backspace — не буквы, в игровом режиме их не проверяем
+        if (c == '\n' || c == '\b')
+            return;
+
         // 1. Показываем введённый символ на экране
         if (typedCharDisplay != null)
             typedCharDisplay.text = c.ToString();
