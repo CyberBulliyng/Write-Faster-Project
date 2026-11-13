@@ -157,13 +157,26 @@ public class FreeTypeController : MonoBehaviour
 
     // ---------------------------------------------------------------- текст
 
+    /// <summary>Применить настройки из GameSettings (размер шрифта строк).</summary>
+    public void ApplySettings()
+    {
+        int size = GameSettings.FontSize;
+        for (int i = 0; i < lineViews.Length; i++)
+        {
+            if (lineViews[i] != null && !Mathf.Approximately(lineViews[i].fontSize, size))
+                lineViews[i].fontSize = size;
+        }
+    }
+
     /// <summary>Поставить новый текст и начать заново.</summary>
     public void ApplyText(string rawText)
     {
         currentText = Sanitize(rawText);
 
+        ApplySettings();
+
         int maxChars = MeasureMaxCharsPerLine(currentText);
-        model.Load(currentText, maxChars);
+        model.Load(currentText, maxChars, GameSettings.RequireParagraphEnter);
 
         started = false;
         finished = false;

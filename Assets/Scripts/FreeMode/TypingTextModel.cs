@@ -45,8 +45,13 @@ public class TypingTextModel
 
     public void Load(string rawText, int maxCharsPerLine)
     {
+        Load(rawText, maxCharsPerLine, true);
+    }
+
+    public void Load(string rawText, int maxCharsPerLine, bool requireEnter)
+    {
         lines.Clear();
-        lines.AddRange(TextWrapper.Wrap(rawText, maxCharsPerLine));
+        lines.AddRange(TextWrapper.Wrap(rawText, maxCharsPerLine, requireEnter));
         Restart();
     }
 

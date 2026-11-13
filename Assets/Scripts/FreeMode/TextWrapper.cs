@@ -12,6 +12,12 @@ public static class TextWrapper
     /// </summary>
     public static System.Collections.Generic.List<TypingLine> Wrap(string rawText, int maxCharsPerLine)
     {
+        return Wrap(rawText, maxCharsPerLine, true);
+    }
+
+    /// <param name="requireEnter">Нужно ли жать Enter в конце абзаца (иначе абзац перескакивается сам).</param>
+    public static System.Collections.Generic.List<TypingLine> Wrap(string rawText, int maxCharsPerLine, bool requireEnter)
+    {
         var result = new System.Collections.Generic.List<TypingLine>();
         if (string.IsNullOrEmpty(rawText))
             return result;
@@ -32,7 +38,7 @@ public static class TextWrapper
             WrapParagraph(text, maxCharsPerLine, result);
 
             // Помечаем конец абзаца: после этой строки игрок жмёт Enter
-            if (result.Count > before)
+            if (requireEnter && result.Count > before)
                 result[result.Count - 1].requiresEnter = true;
         }
 

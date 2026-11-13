@@ -128,6 +128,19 @@ public static class StatsStore
         return Data.sessions;
     }
 
+    /// <summary>Сводка по всем клавишам за всё время (для тепловой карты).</summary>
+    public static List<KeyStat> TotalKeys
+    {
+        get { return Data.totalKeys; }
+    }
+
+    /// <summary>Полностью очистить статистику ( sessions и сводку по клавишам).</summary>
+    public static void ResetAll()
+    {
+        data = new StatsData();
+        Save();
+    }
+
     /// <summary>Средние значения по всем сессиям (для окна статистики).</summary>
     public static void GetAverages(out double cpm, out double netCpm, out double accuracy, out int errors)
     {
