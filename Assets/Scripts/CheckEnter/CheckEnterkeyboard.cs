@@ -20,23 +20,39 @@ public class CheckEnterkeyboard : MonoBehaviour
 
     private void Awake()
     {
-        // После смены сцены старый объект уже живёт (DontDestroyOnLoad) — убираем дубль
-        if (instance != null && instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
+        // Источник ввода — свой в каждой сцене. Раньше тут был DontDestroyOnLoad,
+        // и вместе с клавиатурой в следующую сцену уезжали контроллеры режима,
+        // которые продолжали ловить ввод уже в меню.
+        // Если на сцене два объекта ввода — последняя разбуженная забирает управление,
+        // дубли просто не получают подписчиков.
+        if (instance != null && instance != this && instance.gameObject.scene == gameObject.scene)
+            Debug.Log("CheckEnterkeyboard: на сцене два объекта ввода, управляю этот.");
 
         instance = this;
-        DontDestroyOnLoad(this);
     }
 
     private void OnEnable()
     {
+        // Статика обнуляется при перезагрузке домена — восстанавливаем ссылку
+        if (instance == null)
+            instance = this;
+
         if (Keyboard.current != null)
         {
             Keyboard.current.onTextInput += OnTextInput;
         }
+    }
+
+    /// <summary>
+    /// Текущий источник ввода. Если ссылка потерялась (домен перезагрузился),
+    /// ищем компонент на сцене, чтобы подписки не пропадали.
+    /// </summary>
+    public static CheckEnterkeyboard Get()
+    {
+        if (instance == null)
+            instance = FindFirstObjectByType<CheckEnterkeyboard>();
+
+        return instance;
     }
 
     private void OnDisable()
@@ -45,6 +61,12 @@ public class CheckEnterkeyboard : MonoBehaviour
         {
             Keyboard.current.onTextInput -= OnTextInput;
         }
+    }
+
+    private void OnDestroy()
+    {
+        if (instance == this)
+            instance = null;
     }
 
     private void Update()
@@ -81,7 +103,9 @@ public class CheckEnterkeyboard : MonoBehaviour
     /// <summary>Включить/выключить рассылку ввода (для поля своего текста).</summary>
     public static void SetInputEnabled(bool enabled)
     {
-        if (instance != null)
-            instance.inputEnabled = enabled;
+        CheckEnterkeyboard keyboard = Get();
+
+        if (keyboard != null)
+            keyboard.inputEnabled = enabled;
     }
 }

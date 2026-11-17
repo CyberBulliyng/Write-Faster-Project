@@ -61,13 +61,13 @@ public class WordChecker : MonoBehaviour
             typedCharDisplay.text = string.Empty;
 
         // Подписываемся на ввод (в Start — instance уже точно создан)
-        CheckEnterkeyboard.instance.enterNewCharacter += OnCharacterTyped;
+        CheckEnterkeyboard.Get().enterNewCharacter += OnCharacterTyped;
     }
 
     private void OnDestroy()
     {
-        if (CheckEnterkeyboard.instance != null)
-            CheckEnterkeyboard.instance.enterNewCharacter -= OnCharacterTyped;
+        if (CheckEnterkeyboard.Get() != null)
+            CheckEnterkeyboard.Get().enterNewCharacter -= OnCharacterTyped;
     }
 
     private void OnCharacterTyped(char c)

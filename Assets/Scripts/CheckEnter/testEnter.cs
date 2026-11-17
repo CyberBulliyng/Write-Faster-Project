@@ -13,13 +13,13 @@ public class testEnter : MonoBehaviour
     // Start вызывается после Awake у всех объектов — instance уже есть
     private void Start()
     {
-        CheckEnterkeyboard.instance.enterNewCharacter += TestEnter;
+        CheckEnterkeyboard.Get().enterNewCharacter += TestEnter;
     }
 
     private void OnDestroy()
     {
-        if (CheckEnterkeyboard.instance != null)
-            CheckEnterkeyboard.instance.enterNewCharacter -= TestEnter;
+        if (CheckEnterkeyboard.Get() != null)
+            CheckEnterkeyboard.Get().enterNewCharacter -= TestEnter;
     }
 
     // Теперь событие передаёт сам символ

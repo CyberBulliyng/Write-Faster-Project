@@ -87,14 +87,18 @@ public class FreeTypeController : MonoBehaviour
             return;
         }
 
-        if (CheckEnterkeyboard.instance == null)
+        if (CheckEnterkeyboard.Get() == null)
         {
             Debug.LogError("FreeTypeController: на сцене нет CheckEnterkeyboard (объект Manager).");
             return;
         }
 
-        CheckEnterkeyboard.instance.enterNewCharacter += HandleCharacter;
+        CheckEnterkeyboard.Get().enterNewCharacter += HandleCharacter;
         model.completed += OnModelCompleted;
+
+        // Кнопка «Заново» в меню паузы
+        if (PauseMenu.Find() != null)
+            PauseMenu.Find().restartRequested += Restart;
 
         WireButtons();
         ApplyText(GetSample(currentSampleKey));
@@ -102,8 +106,11 @@ public class FreeTypeController : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (CheckEnterkeyboard.instance != null)
-            CheckEnterkeyboard.instance.enterNewCharacter -= HandleCharacter;
+        if (CheckEnterkeyboard.Get() != null)
+            CheckEnterkeyboard.Get().enterNewCharacter -= HandleCharacter;
+
+        if (PauseMenu.Find() != null)
+            PauseMenu.Find().restartRequested -= Restart;
     }
 
     private void Update()
@@ -282,7 +289,7 @@ public class FreeTypeController : MonoBehaviour
         if (!started && c != TypingTextModel.BackspaceChar)
         {
             started = true;
-            startedAt = Time.realtimeSinceStartupAsDouble;
+            startedAt = Time.time;
             SetStatus("Идёт набор. Enter — конец абзаца, Backspace — стереть последний символ.");
         }
 
@@ -310,7 +317,7 @@ public class FreeTypeController : MonoBehaviour
     private void OnModelCompleted()
     {
         finished = true;
-        finishedAt = Time.realtimeSinceStartupAsDouble;
+        finishedAt = Time.time;
 
         SetStatus("<b>Готово!</b>   Символов/мин: " + Cpm.ToString("0") +
                  "   Чистых символов/мин: " + NetCpm.ToString("0") +
@@ -333,7 +340,7 @@ public class FreeTypeController : MonoBehaviour
             if (!started)
                 return 0;
 
-            double end = finished ? finishedAt : Time.realtimeSinceStartupAsDouble;
+            double end = finished ? finishedAt : Time.time;
             return Math.Max(0.0, end - startedAt);
         }
     }

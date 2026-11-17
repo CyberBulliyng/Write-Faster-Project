@@ -208,7 +208,10 @@ public static class FreeModeSceneBuilder
         loader.clearFieldButton = clear;
         loader.messageText = messageText;
 
-        // 9. Сцены в Build Settings
+        // 9. Меню паузы по Esc
+        PausePanelBuilder.Build(root, manager, font);
+
+        // 10. Сцены в Build Settings
         EnsureScenesInBuild();
 
         EditorUtility.SetDirty(manager);
